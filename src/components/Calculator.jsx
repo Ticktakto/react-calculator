@@ -30,6 +30,7 @@ const Box = styled.div`
 let temp = true;
 const evalFunc = function(string) {
   // eslint-disable-next-line no-new-func
+  string = string.replace(/x/g,"*");
   return new Function("return (" + string + ")")();
 };
 
@@ -59,7 +60,13 @@ class Calculator extends React.Component {
       "√": () => {},
       // TODO: 사칙연산 구현
       "÷": () => {},
-      "×": () => {},
+      "×": () => {
+        temp = true;
+        this.setState({temp});
+        if (lastChar !== "" && !operatorKeys.includes(lastChar)) {
+          this.setState({ displayValue: displayValue + "x" });
+        }
+      },
       "-": () => {
         temp = true;
         this.setState({temp});
@@ -70,7 +77,6 @@ class Calculator extends React.Component {
       "+": () => {
         // + 연산 참고하여 연산 구현
         temp = true;
-        //this.setState({temp});
         if (lastChar !== "" && !operatorKeys.includes(lastChar)) {
           this.setState({ displayValue: displayValue + "+" });
         }
@@ -84,12 +90,14 @@ class Calculator extends React.Component {
         this.setState({ displayValue });
       },
       ".": () => {   
-        if(!displayValue.includes(".")) {
+        if(!displayValue.includes(".") && (lastChar !== "") && !operatorKeys.includes(lastChar)) {
+         
           displayValue += ".";
           this.setState({ displayValue });
           } 
         else {
-            if(lastChar !== "" && !isDot.includes(lastChar) && temp == true){
+            if(lastChar !== "" && !isDot.includes(lastChar) && temp == true && !operatorKeys.includes(lastChar)){
+           
             displayValue += ".";
             this.setState({ displayValue });
             }
