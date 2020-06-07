@@ -31,6 +31,7 @@ let temp = true;
 const evalFunc = function(string) {
   // eslint-disable-next-line no-new-func
   string = string.replace(/x/g,"*");
+  string = string.replace(/÷/g,"/");
   return new Function("return (" + string + ")")();
 };
 
@@ -59,7 +60,13 @@ class Calculator extends React.Component {
       // TODO: 제곱근 구현
       "√": () => {},
       // TODO: 사칙연산 구현
-      "÷": () => {},
+      "÷": () => {
+        temp = true;
+        this.setState({temp});
+        if (lastChar !== "" && !operatorKeys.includes(lastChar)) {
+          this.setState({ displayValue: displayValue + "÷" });
+        }
+      },
       "×": () => {
         temp = true;
         this.setState({temp});
