@@ -30,8 +30,12 @@ const Box = styled.div`
 let temp = true;
 const evalFunc = function(string) {
   // eslint-disable-next-line no-new-func
-  string = string.replace(/x/g,"*");
+  if(string.includes("×")) {
+  string = string.replace(/×/g,"*"); 
+  }
+  if(string.includes("÷")){
   string = string.replace(/÷/g,"/");
+  }
   return new Function("return (" + string + ")")();
 };
 
@@ -58,20 +62,30 @@ class Calculator extends React.Component {
         this.setState({ displayValue });
       },
       // TODO: 제곱근 구현
-      "√": () => {},
+      "√": () => {
+        if(lastChar !== "" && !operatorKeys.includes(lastChar)){
+          if(displayValue.includes(operatorKeys[0]) || displayValue.includes(operatorKeys[1]) ||
+                displayValue.includes(operatorKeys[2]) || displayValue.includes(operatorKeys[3]) || displayValue.includes(isDot)){
+            
+                  displayValue = String(Math.sqrt(Number(evalFunc(displayValue))));
+                  this.setState({ displayValue });
+          } else {
+            displayValue = String(Math.sqrt(Number(displayValue)));
+            this.setState({ displayValue });
+          }
+        }
+      },
       // TODO: 사칙연산 구현
       "÷": () => {
-        temp = true;
-        this.setState({temp});
+        temp = true;  
         if (lastChar !== "" && !operatorKeys.includes(lastChar)) {
           this.setState({ displayValue: displayValue + "÷" });
         }
       },
       "×": () => {
         temp = true;
-        this.setState({temp});
         if (lastChar !== "" && !operatorKeys.includes(lastChar)) {
-          this.setState({ displayValue: displayValue + "x" });
+          this.setState({ displayValue: displayValue + "×" });
         }
       },
       "-": () => {
@@ -133,11 +147,14 @@ class Calculator extends React.Component {
         <Panel>
           <Display displayValue={this.state.displayValue} />
           <ButtonGroup onClickButton={this.onClickButton}>
-            <Button size={2} color="gray">
+            <Button size={1} color="gray">
               AC
             </Button>
             <Button size={1} color="gray">
               BS
+            </Button>
+            <Button size={1} color="gray">
+              √
             </Button>
             <Button size={1} color="gray">
               ÷
