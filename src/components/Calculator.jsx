@@ -27,7 +27,7 @@ const Box = styled.div`
     margin: 0px;
   }
 `;
-
+let temp = true;
 const evalFunc = function(string) {
   // eslint-disable-next-line no-new-func
   return new Function("return (" + string + ")")();
@@ -44,6 +44,7 @@ class Calculator extends React.Component {
     displayValue = "" + displayValue;
     const lastChar = displayValue.substr(displayValue.length - 1);
     const operatorKeys = ["÷", "×", "-", "+"];
+    const isDot = ".";
     const proc = {
       AC: () => {
         this.setState({ displayValue: "" });
@@ -62,6 +63,9 @@ class Calculator extends React.Component {
       "-": () => {},
       "+": () => {
         // + 연산 참고하여 연산 구현
+        temp = true;
+        this.setState({temp});
+        console.log("temp = ", temp);
         if (lastChar !== "" && !operatorKeys.includes(lastChar)) {
           this.setState({ displayValue: displayValue + "+" });
         }
@@ -74,7 +78,21 @@ class Calculator extends React.Component {
         }
         this.setState({ displayValue });
       },
-      ".": () => {},
+      ".": () => {
+        console.log("temp = ", temp);
+        if(!displayValue.includes(".")) {
+          displayValue += ".";
+          this.setState({ displayValue });
+          } 
+        else {
+            if(lastChar !== "" && !isDot.includes(lastChar) && temp == true){
+            displayValue += ".";
+            this.setState({ displayValue });
+            }
+          }
+        temp = false;
+        console.log("After temp = ", temp);
+        },
       "0": () => {
         if (Number(displayValue) !== 0) {
           displayValue += "0";
