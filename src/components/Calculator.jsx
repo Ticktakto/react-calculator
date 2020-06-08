@@ -2,6 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 
 import Panel from "./Panel";
+import History from "./History";
 import Display from "./Display";
 import ButtonGroup from "./ButtonGroup";
 import Button from "./Button";
@@ -36,17 +37,34 @@ const evalFunc = function(string) {
   if(string.includes("÷")){
   string = string.replace(/÷/g,"/");
   }
+  /*if(string.includes("√")) {
+    string = string.replace(/√/g,"");
+  }
+  if(string.includes("(")) {
+    string = string.replace(/\(/g,"");
+  }
+  if(string.includes(")")) {
+    string = string.replace(/\)/g,"");
+  }*/
   return new Function("return (" + string + ")")();
 };
+
 
 class Calculator extends React.Component {
   // TODO: history 추가
   state = {
-    displayValue: ""
+    displayValue: "",
+    hhistory: [],
+    sqrtCheck: [],
+    isSqrt: false
   };
 
+ 
   onClickButton = key => {
     let { displayValue = "" } = this.state;
+    let { hhistory = [] } = this.state;
+    let { sqrtCheck = [] } = this.state;
+    let { isSqrt = false } = this.state;
     displayValue = "" + displayValue;
     const lastChar = displayValue.substr(displayValue.length - 1);
     const operatorKeys = ["÷", "×", "-", "+"];
@@ -63,14 +81,23 @@ class Calculator extends React.Component {
       },
       // TODO: 제곱근 구현
       "√": () => {
+        isSqrt = true;
+        this.setState({isSqrt});
         if(lastChar !== "" && !operatorKeys.includes(lastChar)){
           if(displayValue.includes(operatorKeys[0]) || displayValue.includes(operatorKeys[1]) ||
                 displayValue.includes(operatorKeys[2]) || displayValue.includes(operatorKeys[3]) || displayValue.includes(isDot)){
-            
+                  sqrtCheck.push("√(" + displayValue + ")");
                   displayValue = String(Math.sqrt(Number(evalFunc(displayValue))));
+                  hhistory.push(displayValue);
+                  this.setState( { sqrtCheck });
+                  this.setState( { hhistory });
                   this.setState({ displayValue });
           } else {
+            sqrtCheck.push("√(" + displayValue + ")");
             displayValue = String(Math.sqrt(Number(displayValue)));
+            hhistory.push(displayValue);
+            this.setState( { sqrtCheck });
+            this.setState( { hhistory });
             this.setState({ displayValue });
           }
         }
@@ -106,19 +133,25 @@ class Calculator extends React.Component {
         if (lastChar !== "" && operatorKeys.includes(lastChar)) {
           displayValue = displayValue.substr(0, displayValue.length - 1);
         } else if (lastChar !== "") {
-          displayValue = evalFunc(displayValue);
+         isSqrt = false;
+         this.setState({isSqrt}); 
+         sqrtCheck.push(displayValue);
+         hhistory.push(displayValue);
+         displayValue = evalFunc(displayValue);
         }
+        this.setState( { sqrtCheck });
+        this.setState( { hhistory });
+        console.log(sqrtCheck);
+        console.log(hhistory);
         this.setState({ displayValue });
       },
       ".": () => {   
         if(!displayValue.includes(".") && (lastChar !== "") && !operatorKeys.includes(lastChar)) {
-         
           displayValue += ".";
           this.setState({ displayValue });
           } 
         else {
             if(lastChar !== "" && !isDot.includes(lastChar) && temp == true && !operatorKeys.includes(lastChar)){
-           
             displayValue += ".";
             this.setState({ displayValue });
             }
@@ -142,6 +175,7 @@ class Calculator extends React.Component {
   };
 
   render() {
+    
     return (
       <Container>
         <Panel>
@@ -188,7 +222,23 @@ class Calculator extends React.Component {
             </Button>
           </ButtonGroup>
         </Panel>
-        {/* TODO: History componet를 이용해 map 함수와 Box styled div를 이용해 history 표시 */}
+        <History hhistory = {this.state.hhistory}>
+        {/* TODO: History componet를 이용해 map 함수와 Box styled div를 이용해 history 표시 */
+        this.state.hhistory.map((x,i) => {
+          return(
+           
+            <Box>
+              {this.state.sqrtCheck[i]+"\n"}
+              
+              <br></br>
+              {
+              "=" + evalFunc(x)}
+            </Box>
+          );
+        })
+        }
+        </History>
+        
 
       </Container>
     );
