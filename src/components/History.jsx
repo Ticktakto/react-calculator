@@ -22,7 +22,7 @@ const Container = styled.div`
 class History extends React.Component {
   
   render() {
-    return <Container >{this.props.children}</Container>;
+    return <Container data-testid="history">{this.props.children}</Container>;
   }
 }
 export default History;
