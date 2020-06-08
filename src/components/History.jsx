@@ -20,8 +20,9 @@ const Container = styled.div`
 
 // TODO: Panel 을 참고해서 History component 생성 및 export
 class History extends React.Component {
+  
   render() {
-    return <Container>{this.props.children}</Container>;
+    return <Container >{this.props.children}</Container>;
   }
 }
 export default History;

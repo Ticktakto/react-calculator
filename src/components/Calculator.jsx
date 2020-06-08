@@ -29,6 +29,7 @@ const Box = styled.div`
   }
 `;
 let temp = true;
+let index = 0;
 const evalFunc = function(string) {
   // eslint-disable-next-line no-new-func
   if(string.includes("×")) {
@@ -55,15 +56,22 @@ class Calculator extends React.Component {
   state = {
     displayValue: "",
     hhistory: [],
-    sqrtCheck: [],
+    history: [],
     isSqrt: false
   };
 
- 
+  onClickHistory = (e,data) => {
+    let { displayValue = "" } = this.state;
+    displayValue = data;
+    this.setState({displayValue});
+    console.log(data);
+    
+  }
+  
   onClickButton = key => {
     let { displayValue = "" } = this.state;
     let { hhistory = [] } = this.state;
-    let { sqrtCheck = [] } = this.state;
+    let { history = [] } = this.state;
     let { isSqrt = false } = this.state;
     displayValue = "" + displayValue;
     const lastChar = displayValue.substr(displayValue.length - 1);
@@ -86,17 +94,17 @@ class Calculator extends React.Component {
         if(lastChar !== "" && !operatorKeys.includes(lastChar)){
           if(displayValue.includes(operatorKeys[0]) || displayValue.includes(operatorKeys[1]) ||
                 displayValue.includes(operatorKeys[2]) || displayValue.includes(operatorKeys[3]) || displayValue.includes(isDot)){
-                  sqrtCheck.push("√(" + displayValue + ")");
+                  history.push("√(" + displayValue + ")");
                   displayValue = String(Math.sqrt(Number(evalFunc(displayValue))));
                   hhistory.push(displayValue);
-                  this.setState( { sqrtCheck });
+                  this.setState( { history });
                   this.setState( { hhistory });
                   this.setState({ displayValue });
           } else {
-            sqrtCheck.push("√(" + displayValue + ")");
+            history.push("√(" + displayValue + ")");
             displayValue = String(Math.sqrt(Number(displayValue)));
             hhistory.push(displayValue);
-            this.setState( { sqrtCheck });
+            this.setState( { history });
             this.setState( { hhistory });
             this.setState({ displayValue });
           }
@@ -135,13 +143,13 @@ class Calculator extends React.Component {
         } else if (lastChar !== "") {
          isSqrt = false;
          this.setState({isSqrt}); 
-         sqrtCheck.push(displayValue);
+         history.push(displayValue);
          hhistory.push(displayValue);
          displayValue = evalFunc(displayValue);
         }
-        this.setState( { sqrtCheck });
+        this.setState( { history });
         this.setState( { hhistory });
-        console.log(sqrtCheck);
+        console.log(history);
         console.log(hhistory);
         this.setState({ displayValue });
       },
@@ -164,7 +172,10 @@ class Calculator extends React.Component {
           this.setState({ displayValue });
         }
       }
+
     };
+
+
 
     if (proc[key]) {
       proc[key]();
@@ -225,14 +236,12 @@ class Calculator extends React.Component {
         <History hhistory = {this.state.hhistory}>
         {/* TODO: History componet를 이용해 map 함수와 Box styled div를 이용해 history 표시 */
         this.state.hhistory.map((x,i) => {
-          return(
-           
-            <Box>
-              {this.state.sqrtCheck[i]+"\n"}
-              
-              <br></br>
-              {
-              "=" + evalFunc(x)}
+          index = i;
+          return( 
+            <Box value = {x.i} onClick={((e) => this.onClickHistory(e,this.state.hhistory[i]))}>
+              {this.state.history[i]+"\n"}          
+             <br></br>
+              {"=" + evalFunc(x)}
             </Box>
           );
         })
