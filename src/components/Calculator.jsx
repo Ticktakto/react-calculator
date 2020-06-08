@@ -55,8 +55,8 @@ class Calculator extends React.Component {
   // TODO: history 추가
   state = {
     displayValue: "",
-    hhistory: [],
     history: [],
+    formula: [],
     isSqrt: false
   };
 
@@ -70,8 +70,8 @@ class Calculator extends React.Component {
   
   onClickButton = key => {
     let { displayValue = "" } = this.state;
-    let { hhistory = [] } = this.state;
     let { history = [] } = this.state;
+    let { formula = [] } = this.state;
     let { isSqrt = false } = this.state;
     displayValue = "" + displayValue;
     const lastChar = displayValue.substr(displayValue.length - 1);
@@ -94,18 +94,18 @@ class Calculator extends React.Component {
         if(lastChar !== "" && !operatorKeys.includes(lastChar)){
           if(displayValue.includes(operatorKeys[0]) || displayValue.includes(operatorKeys[1]) ||
                 displayValue.includes(operatorKeys[2]) || displayValue.includes(operatorKeys[3]) || displayValue.includes(isDot)){
-                  history.push("√(" + displayValue + ")");
+                  formula.push("√(" + displayValue + ")");
                   displayValue = String(Math.sqrt(Number(evalFunc(displayValue))));
-                  hhistory.push(displayValue);
+                  history.push(displayValue);
+                  this.setState( { formula });
                   this.setState( { history });
-                  this.setState( { hhistory });
                   this.setState({ displayValue });
           } else {
-            history.push("√(" + displayValue + ")");
+            formula.push("√(" + displayValue + ")");
             displayValue = String(Math.sqrt(Number(displayValue)));
-            hhistory.push(displayValue);
+            history.push(displayValue);
+            this.setState( { formula });
             this.setState( { history });
-            this.setState( { hhistory });
             this.setState({ displayValue });
           }
         }
@@ -143,14 +143,14 @@ class Calculator extends React.Component {
         } else if (lastChar !== "") {
          isSqrt = false;
          this.setState({isSqrt}); 
+         formula.push(displayValue);
          history.push(displayValue);
-         hhistory.push(displayValue);
          displayValue = evalFunc(displayValue);
         }
+        this.setState( { formula });
         this.setState( { history });
-        this.setState( { hhistory });
+        console.log(formula);
         console.log(history);
-        console.log(hhistory);
         this.setState({ displayValue });
       },
       ".": () => {   
@@ -233,13 +233,13 @@ class Calculator extends React.Component {
             </Button>
           </ButtonGroup>
         </Panel>
-        <History hhistory = {this.state.hhistory}>
+        <History history = {this.state.history}>
         {/* TODO: History componet를 이용해 map 함수와 Box styled div를 이용해 history 표시 */
-        this.state.hhistory.map((x,i) => {
+        this.state.history.map((x,i) => {
           index = i;
           return( 
-            <Box value = {x.i} onClick={((e) => this.onClickHistory(e,this.state.hhistory[i]))}>
-              {this.state.history[i]+"\n"}          
+            <Box value = {x.i} onClick={((e) => this.onClickHistory(e,this.state.history[i]))}>
+              {this.state.formula[i]+"\n"}          
              <br></br>
               {"=" + evalFunc(x)}
             </Box>
