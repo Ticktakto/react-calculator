@@ -32,21 +32,29 @@ let temp = true;
 let index = 0;
 const evalFunc = function(string) {
   // eslint-disable-next-line no-new-func
+  
+  //
+  if(string.includes("√")) {
+    string = string.replace(/√/g,"");
+    if(string.includes("(")) {
+      string = string.replace(/\(/g,"");
+    }
+    if(string.includes(")")) {
+      string = string.replace(/\)/g,"");
+    }
+      let results = new Function("return (" + string + ")")();
+      return String(Math.sqrt(Number(results)))
+  }
+  //
+
   if(string.includes("×")) {
   string = string.replace(/×/g,"*"); 
   }
   if(string.includes("÷")){
   string = string.replace(/÷/g,"/");
   }
-  /*if(string.includes("√")) {
-    string = string.replace(/√/g,"");
-  }
-  if(string.includes("(")) {
-    string = string.replace(/\(/g,"");
-  }
-  if(string.includes(")")) {
-    string = string.replace(/\)/g,"");
-  }*/
+
+  
   return new Function("return (" + string + ")")();
 };
 
@@ -96,17 +104,43 @@ class Calculator extends React.Component {
                 displayValue.includes(operatorKeys[2]) || displayValue.includes(operatorKeys[3]) || displayValue.includes(isDot)){
                   formula.push("√(" + displayValue + ")");
                   displayValue = String(Math.sqrt(Number(evalFunc(displayValue))));
+                 
                   history.push(displayValue);
                   this.setState( { formula });
                   this.setState( { history });
                   this.setState({ displayValue });
-          } else {
+                  isSqrt = false;
+          } 
+          if(displayValue.includes("√") && displayValue[0] == "√"){
             formula.push("√(" + displayValue + ")");
-            displayValue = String(Math.sqrt(Number(displayValue)));
+            console.log("hi!");
+            let FirstCalc = displayValue.substr(displayValue.indexOf('('), displayValue.indexOf(')') - 
+            (displayValue.indexOf('(', displayValue.indexOf('(') + 1) + 1));
+            console.log("step1 : ",FirstCalc);
+            FirstCalc = String(Math.sqrt(Number(evalFunc(FirstCalc))));
+            console.log("step2 : ",FirstCalc);
+            displayValue = String(Math.sqrt(Number(evalFunc(FirstCalc))));
+            console.log("step3 : ",displayValue);
+
             history.push(displayValue);
             this.setState( { formula });
             this.setState( { history });
             this.setState({ displayValue });
+            isSqrt = false;
+            //√(√(Number)) 인 경우? , √...(√(√(Number))) 경우는 처리 X,
+          }
+          else {
+            if(isSqrt == true){
+            formula.push("√(" + displayValue + ")");
+            displayValue = String(Math.sqrt(Number(displayValue)));
+            
+            history.push(displayValue);
+            this.setState( { formula });
+            this.setState( { history });
+            this.setState({ displayValue });
+            }
+
+            
           }
         }
       },
@@ -236,12 +270,12 @@ class Calculator extends React.Component {
         <History history = {this.state.history}>
         {/* TODO: History componet를 이용해 map 함수와 Box styled div를 이용해 history 표시 */
         this.state.history.map((x,i) => {
-          index = i;
+          index = i; //history <-> formula
           return( 
-            <Box value = {x.i} onClick={((e) => this.onClickHistory(e,this.state.history[i]))}>
-              {this.state.formula[i]+"\n"}          
+            <Box value = {x.i} onClick={((e) => this.onClickHistory(e,this.state.formula[i]))}> 
+              {this.state.formula[i]}          
              <br></br>
-              {"=" + evalFunc(x)}
+              {"= " + evalFunc(x)}
             </Box>
           );
         })
