@@ -35,6 +35,19 @@ const evalFunc = function(string) {
   
   //
   if(string.includes("√")) {
+    if(string[2] == "√" && string[0] == "√"){
+     //ex)histroy get= √(√(16)) => 2
+      let firstCALC = string.substr(string.indexOf('(',string.indexOf('(') + 1)+1,
+      string.indexOf(')') - (string.indexOf('(', string.indexOf('(') + 1) + 1));
+  
+      string = string.replace(/√/g,"");
+      string = string.replace(/\(/g,"");
+      string = string.replace(/\)/g,"");
+
+      firstCALC = Math.sqrt(Number(firstCALC));
+      return String(Math.sqrt(Number(firstCALC)));
+    }
+
     string = string.replace(/√/g,"");
     if(string.includes("(")) {
       string = string.replace(/\(/g,"");
@@ -43,7 +56,7 @@ const evalFunc = function(string) {
       string = string.replace(/\)/g,"");
     }
       let results = new Function("return (" + string + ")")();
-      return String(Math.sqrt(Number(results)))
+      return String(Math.sqrt(Number(results)));
   }
   //
 
