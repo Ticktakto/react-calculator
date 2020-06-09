@@ -72,7 +72,7 @@ class Calculator extends React.Component {
     let { displayValue = "" } = this.state;
     displayValue = data;
     this.setState({displayValue});
-    console.log(data);
+    
     
   }
   
@@ -113,14 +113,14 @@ class Calculator extends React.Component {
           } 
           if(displayValue.includes("√") && displayValue[0] == "√"){
             formula.push("√(" + displayValue + ")");
-            console.log("hi!");
+            
             let FirstCalc = displayValue.substr(displayValue.indexOf('('), displayValue.indexOf(')') - 
             (displayValue.indexOf('(', displayValue.indexOf('(') + 1) + 1));
-            console.log("step1 : ",FirstCalc);
+            
             FirstCalc = String(Math.sqrt(Number(evalFunc(FirstCalc))));
-            console.log("step2 : ",FirstCalc);
+            
             displayValue = String(Math.sqrt(Number(evalFunc(FirstCalc))));
-            console.log("step3 : ",displayValue);
+            
 
             history.push(displayValue);
             this.setState( { formula });
@@ -183,8 +183,6 @@ class Calculator extends React.Component {
         }
         this.setState( { formula });
         this.setState( { history });
-        console.log(formula);
-        console.log(history);
         this.setState({ displayValue });
       },
       ".": () => {   
