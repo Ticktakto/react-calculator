@@ -115,17 +115,17 @@ class Calculator extends React.Component {
         if(lastChar !== "" && !operatorKeys.includes(lastChar)){
           if(displayValue.includes(operatorKeys[0]) || displayValue.includes(operatorKeys[1]) ||
                 displayValue.includes(operatorKeys[2]) || displayValue.includes(operatorKeys[3]) || displayValue.includes(isDot)){
-                  formula.push("√(" + displayValue + ")");
+                  formula.unshift("√(" + displayValue + ")");
                   displayValue = String(Math.sqrt(Number(evalFunc(displayValue))));
                  
-                  history.push(displayValue);
+                  history.unshift(displayValue);
                   this.setState( { formula });
                   this.setState( { history });
                   this.setState({ displayValue });
                   isSqrt = false;
           } 
           if(displayValue.includes("√") && displayValue[0] == "√"){
-            formula.push("√(" + displayValue + ")");
+            formula.unshift("√(" + displayValue + ")");
             
             let FirstCalc = displayValue.substr(displayValue.indexOf('('), displayValue.indexOf(')') - 
             (displayValue.indexOf('(', displayValue.indexOf('(') + 1) + 1));
@@ -135,7 +135,7 @@ class Calculator extends React.Component {
             displayValue = String(Math.sqrt(Number(evalFunc(FirstCalc))));
             
 
-            history.push(displayValue);
+            history.unshift(displayValue);
             this.setState( { formula });
             this.setState( { history });
             this.setState({ displayValue });
@@ -144,10 +144,10 @@ class Calculator extends React.Component {
           }
           else {
             if(isSqrt == true){
-            formula.push("√(" + displayValue + ")");
+            formula.unshift("√(" + displayValue + ")");
             displayValue = String(Math.sqrt(Number(displayValue)));
             
-            history.push(displayValue);
+            history.unshift(displayValue);
             this.setState( { formula });
             this.setState( { history });
             this.setState({ displayValue });
@@ -190,8 +190,8 @@ class Calculator extends React.Component {
         } else if (lastChar !== "") {
          isSqrt = false;
          this.setState({isSqrt}); 
-         formula.push(displayValue);
-         history.push(displayValue);
+         formula.unshift(displayValue);
+         history.unshift(displayValue);
          displayValue = evalFunc(displayValue);
         }
         this.setState( { formula });
