@@ -284,7 +284,7 @@ class Calculator extends React.Component {
           index = i; //history <-> formula
           return( 
             <Box value = {x.i} onClick={((e) => this.onClickHistory(e,this.state.formula[i]))}> 
-              {this.state.formula[i]+"\n"}          
+              {this.state.formula[i]}          
               {"= " + evalFunc(x)}
             </Box>
           );
